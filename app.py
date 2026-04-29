@@ -145,14 +145,14 @@ def find_best_match(new_person,existing_df):
         results.append(s)
     return sorted(results,key=lambda x:x['overall'],reverse=True)[0] if results else None
 
-SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw/edit?gid=921545234#gid=921545234"
-SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=921545234"
+SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw"
+SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/gviz/tq?tqx=out:csv&gid=921545234"
 
 @st.cache_data(ttl=60)
 def load_existing():
     try:
         df = pd.read_csv(SHEET_URL)
-        df.columns = df.columns.str.strip()
+        df.columns = df.columns.str.strip().str.replace('"', '')
         nc = [c for c in df.columns if 'name' in c.lower()]
         if nc:
             df = df.rename(columns={nc[0]: 'Your name'})
