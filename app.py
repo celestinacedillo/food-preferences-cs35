@@ -145,7 +145,7 @@ def find_best_match(new_person,existing_df):
         results.append(s)
     return sorted(results,key=lambda x:x['overall'],reverse=True)[0] if results else None
 
-SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw"
+SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw/edit?gid=921545234#gid=921545234"
 SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=0"
 
 @st.cache_data(ttl=60)
