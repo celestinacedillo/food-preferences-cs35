@@ -195,9 +195,7 @@ st.markdown("""
 existing_df = load_existing()
 if existing_df is not None:
     st.markdown(f"<div style='text-align:center;font-size:0.8rem;color:#c9a84c;margin-bottom:1rem'>✓ {len(existing_df)} people in the pool</div>", unsafe_allow_html=True)
-    with st.expander("🔧 Debug — click to see column names from your sheet"):
-        for i, col in enumerate(existing_df.columns):
-            st.write(f"{i}: {col}")
+    
 else:
     st.markdown("<div style='text-align:center;font-size:0.8rem;color:#9e9689;margin-bottom:0.5rem'>⚠️ Could not load responses — check your Google Sheet is public</div>", unsafe_allow_html=True)
 
