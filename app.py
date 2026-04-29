@@ -145,12 +145,20 @@ def find_best_match(new_person,existing_df):
         results.append(s)
     return sorted(results,key=lambda x:x['overall'],reverse=True)[0] if results else None
 
-@st.cache_data
-def load_existing(f):
-    df=pd.read_excel(f); df.columns=df.columns.str.strip()
-    nc=[c for c in df.columns if c.lower().startswith('your name')]
-    if nc: df=df.rename(columns={nc[0]:'Your name'})
-    return df
+SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw/edit?gid=921545234#gid=921545234"
+SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv"
+
+@st.cache_data(ttl=300)
+def load_existing():
+    try:
+        df = pd.read_csv(SHEET_URL)
+        df.columns = df.columns.str.strip()
+        nc = [c for c in df.columns if c.lower().startswith('your name')]
+        if nc: df = df.rename(columns={nc[0]: 'Your name'})
+        return df
+    except Exception as e:
+        st.error(f"Could not load responses: {e}")
+        return None
 
 def pill_class(v): return 'score-high' if v>=70 else 'score-mid' if v>=40 else 'score-low'
 
@@ -181,13 +189,11 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-uploaded=st.file_uploader("Load responses (Google Sheets Excel export)",type=["xlsx"],label_visibility="collapsed")
-if uploaded:
-    existing_df=load_existing(uploaded)
-    st.markdown(f"<div style='text-align:center;font-size:0.8rem;color:#c9a84c;margin-bottom:1rem'>✓ {len(existing_df)} people in the pool</div>",unsafe_allow_html=True)
+existing_df = load_existing()
+if existing_df is not None:
+    st.markdown(f"<div style='text-align:center;font-size:0.8rem;color:#c9a84c;margin-bottom:1rem'>✓ {len(existing_df)} people in the pool</div>", unsafe_allow_html=True)
 else:
-    existing_df=None
-    st.markdown("<div style='text-align:center;font-size:0.8rem;color:#9e9689;margin-bottom:0.5rem'>↑ Upload your Google Sheets export to enable matching</div>",unsafe_allow_html=True)
+    st.markdown("<div style='text-align:center;font-size:0.8rem;color:#9e9689;margin-bottom:0.5rem'>⚠️ Could not load responses — check your Google Sheet is public</div>", unsafe_allow_html=True)
 
 st.markdown("<hr class='fancy-divider'>",unsafe_allow_html=True)
 
