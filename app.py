@@ -146,19 +146,16 @@ def find_best_match(new_person,existing_df):
     return sorted(results,key=lambda x:x['overall'],reverse=True)[0] if results else None
 
 SHEET_ID = "1zn-sxMSw5ohyzyD7qr7ajiqYx01QuffjIoghv5l4gHw/edit?gid=921545234#gid=921545234"
-SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=0"
+SHEET_URL = f"https://docs.google.com/spreadsheets/d/{SHEET_ID}/export?format=csv&gid=921545234"
 
 @st.cache_data(ttl=60)
 def load_existing():
     try:
         df = pd.read_csv(SHEET_URL)
         df.columns = df.columns.str.strip()
-        # Debug: show column names to help diagnose
-        # Find name column flexibly
         nc = [c for c in df.columns if 'name' in c.lower()]
-        if nc: 
+        if nc:
             df = df.rename(columns={nc[0]: 'Your name'})
-        # Drop rows where name is empty
         df = df.dropna(subset=['Your name'])
         df = df[df['Your name'].str.strip() != '']
         return df
@@ -199,7 +196,8 @@ existing_df = load_existing()
 if existing_df is not None:
     st.markdown(f"<div style='text-align:center;font-size:0.8rem;color:#c9a84c;margin-bottom:1rem'>✓ {len(existing_df)} people in the pool</div>", unsafe_allow_html=True)
     with st.expander("🔧 Debug — click to see column names from your sheet"):
-        st.write(list(existing_df.columns))
+        for i, col in enumerate(existing_df.columns):
+            st.write(f"{i}: {col}")
 else:
     st.markdown("<div style='text-align:center;font-size:0.8rem;color:#9e9689;margin-bottom:0.5rem'>⚠️ Could not load responses — check your Google Sheet is public</div>", unsafe_allow_html=True)
 
